@@ -1,0 +1,19 @@
+﻿@model PersonResponse;
+@{
+    ViewBag.Title = "Delete Person";
+}
+<form asp-action="Delete" asp-controller="Persons" method="post">
+
+    @*PersonName*@
+    <div class="form-field flex">
+        <div class="w-25">
+            <label asp-for="PersonName" class="form-label pt">Person Name</label>
+        </div>
+        <div class="flex-1">
+            <input asp-for="PersonName" class="form-input" placeholder="@Model.PersonName" readonly />
+        </div>
+    </div>
+
+    <button class="button button-red-back" type="submit">Delete</button>
+
+</form>
