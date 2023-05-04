@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Services
         {
             _db = personsDbContext;
         }
-        public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
+        public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
         {
             //Validation: countryAddRequest parameter can't be null 
             if (countryAddRequest == null)
@@ -26,7 +27,7 @@ namespace Services
                 throw new ArgumentException(nameof(countryAddRequest));
             }
             //Validation: countryAddRequest.CountryName parameter can't be duplicated 
-            if (_db.Countries.Count(temp => temp.CountryName == countryAddRequest.CountryName) > 0)
+            if (await _db.Countries.CountAsync(temp => temp.CountryName == countryAddRequest.CountryName) > 0)
             {
                 throw new ArgumentException("Given CountryName already exists. CountryName can't be duplicated");
             }
@@ -40,17 +41,17 @@ namespace Services
             _db.Add(country);
 
             //Save Changes into db
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return country.ToCountryResponse();
         }
 
-        public List<CountryResponse> GetAllCountries()
+        public async Task<List<CountryResponse>> GetAllCountries()
         {
-            return _db.Countries.Select(country => country.ToCountryResponse()).ToList();
+            return await _db.Countries.Select(country => country.ToCountryResponse()).ToListAsync();
         }
 
-        public CountryResponse? GetCountryByID(Guid? countryID)
+        public async Task<CountryResponse?> GetCountryByID(Guid? countryID)
         {
             if (countryID == null) return null;
 
